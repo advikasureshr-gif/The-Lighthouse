@@ -2495,4 +2495,33 @@ document.addEventListener('DOMContentLoaded', () => {
       if (c) attachSkeletonToSimpleImage(c, 360);
     });
   }
+
+  const phoneInput = document.getElementById('modal-phone');
+const phoneError = document.getElementById('phone-error');
+
+phoneInput.addEventListener('input', () => {
+    // 1. Remove non-numeric characters without slicing at 10 digits
+    phoneInput.value = phoneInput.value.replace(/\D/g, '');
+
+    const val = phoneInput.value;
+
+    // 2. Show the error if the length exceeds 10 OR if it's incomplete on input
+    // If you only want the error to appear when they typed *more* than 10 digits while typing:
+    if (val.length > 10) {
+        phoneError.style.display = 'block';
+        phoneInput.style.borderColor = 'red';
+    } else {
+        phoneError.style.display = 'none';
+        phoneInput.style.borderColor = '';
+    }
+});
+
+// 3. Keep the blur listener to catch cases where they typed FEWER than 10 digits and left the field
+phoneInput.addEventListener('blur', () => {
+    const isValid = /^\d{10}$/.test(phoneInput.value);
+    if (!isValid && phoneInput.value.length > 0) {
+        phoneError.style.display = 'block';
+        phoneInput.style.borderColor = 'red';
+    }
+});
 });
