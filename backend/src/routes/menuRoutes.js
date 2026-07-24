@@ -9,10 +9,10 @@ const {
   deleteMenuItem,
   getTonightMenu
 } = require('../controllers/menuController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, optionalProtect } = require('../middleware/auth');
 
 // Public routes
-router.get('/', getMenuItems);
+router.get('/', optionalProtect, getMenuItems);
 router.get('/tonight', getTonightMenu);
 router.get('/:id', getMenuItem);
 

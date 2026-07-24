@@ -5,7 +5,12 @@ const Review = require('../models/Review');
 // @access  Public
 exports.getReviews = async (req, res) => {
   try {
-    const reviews = await Review.find()
+    const filter = {};
+    if (req.query.menuItem) {
+      filter.menuItem = req.query.menuItem;
+    }
+
+    const reviews = await Review.find(filter)
       .populate('user', 'name')
       .populate('menuItem', 'name')
       .sort({ createdAt: -1 })

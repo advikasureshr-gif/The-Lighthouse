@@ -2388,17 +2388,24 @@ document.addEventListener('DOMContentLoaded', () => {
       }, function (err, t) {
         if (err) return console.error(err);
 
-        const activeLang = i18next.resolvedLanguage || 'en';
-        const langSelector = document.querySelector('.language-select');
-        if (langSelector) {
-          langSelector.value = activeLang;
-          langSelector.addEventListener('change', (e) => {
+        const langSelectors = document.querySelectorAll('.language-select');
+        const syncLanguageSelectors = (language) => {
+          langSelectors.forEach((selector) => {
+            selector.value = language;
+          });
+        };
+
+        syncLanguageSelectors(i18next.resolvedLanguage || 'en');
+
+        langSelectors.forEach((selector) => {
+          selector.addEventListener('change', (e) => {
             i18next.changeLanguage(e.target.value, (err, t) => {
               if (err) return console.error(err);
+              syncLanguageSelectors(i18next.resolvedLanguage || e.target.value);
               updateContent();
             });
           });
-        }
+        });
         updateContent();
       });
   }
