@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Tooltip from './Tooltip';
+import ConfirmModal from './ConfirmModal';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -9,6 +10,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -16,10 +18,19 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const handleConfirmLogout = () => {
+    setShowLogoutConfirm(false);
     logout();
     navigate('/');
     setMenuOpen(false);
+  };
+
+  const handleCancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   return (
@@ -51,7 +62,7 @@ const Navbar = () => {
               <div className="navbar__user">
                 <span className="navbar__user-name">Hi, {user.name.split(' ')[0]}</span>
                 <Tooltip content="Sign out of your account" position="bottom">
-                  <button className="btn btn-ghost" onClick={handleLogout}>Logout</button>
+                  <button className="btn btn-ghost" onClick={handleLogoutClick}>Logout</button>
                 </Tooltip>
               </div>
             </>
@@ -74,6 +85,16 @@ const Navbar = () => {
           </button>
         </Tooltip>
       </div>
+
+      <ConfirmModal
+        isOpen={showLogoutConfirm}
+        title="Sign out?"
+        message="Are you sure you want to sign out of your account?"
+        confirmText="Sign Out"
+        cancelText="Cancel"
+        onConfirm={handleConfirmLogout}
+        onCancel={handleCancelLogout}
+      />
     </header>
   );
 };
