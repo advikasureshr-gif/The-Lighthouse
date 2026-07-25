@@ -45,7 +45,8 @@ class AvailabilityService {
 
     const reservations = await Reservation.find({
       date: { $gte: startOfDay, $lte: endOfDay },
-      status: { $in: ['pending', 'confirmed'] }
+      status: { $in: ['pending', 'confirmed'] },
+      table: { $in: availableTables.map(t => t._id) }
     });
 
     // Generate time slots
