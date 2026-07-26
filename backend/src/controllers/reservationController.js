@@ -187,11 +187,11 @@ exports.cancelReservation = async (req, res) => {
     }
 
     // Check if reservation is in the future
-    const reservationDate = new Date(reservation.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const dateStr = reservation.date.toISOString().split('T')[0];
+    const reservationDateTime = new Date(`${dateStr}T${reservation.time}`);
+    const now = new Date();
 
-    if (reservationDate < today) {
+    if (reservationDateTime < now) {
       return res.status(400).json({
         success: false,
         error: 'Cannot cancel past reservations'
