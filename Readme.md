@@ -21,6 +21,7 @@ Built with MongoDB, Express, React (Vite), and Node.js. Features a live menu ava
 - [🎯 The Problem We Solve](#-the-problem-we-solve)
 - [✨ Features](#-features)
 - [🛠️ Tech Stack](#️-tech-stack)
+- [📐 System Architecture](#-system-architecture)
 - [📂 Project Structure](#-project-structure)
 - [🚀 Getting Started](#-getting-started)
 - [🔑 API Reference](#-api-reference)
@@ -118,10 +119,23 @@ Most restaurant websites and food apps share the same flaw — the **"Black Box 
 |------------|---------|
 | **React 19** | UI framework |
 | **Vite** | Build tool & dev server |
-| **React Router v6** | Client-side routing |
+| **React Router v7** | Client-side routing |
 | **Axios** | HTTP client with JWT interceptor |
 | **React Context** | Auth + Menu global state |
 | **Vanilla CSS** | Design system (CSS variables) |
+
+---
+
+## 📐 System Architecture
+
+The Lighthouse is built on a decoupled MERN architecture comprising a React 19 SPA ([/frontend](./frontend)), an Express REST API ([/backend](./backend)), and a legacy static client at the root.
+
+Key architectural features include:
+- **Live Menu Availability Engine:** Real-time dish availability toggling and dynamic time-of-day menu filtering.
+- **Double-Booking Protection:** Database-level Mongoose partial unique index on `{ table: 1, date: 1, time: 1 }` for confirmed reservations.
+- **Security & Validation:** JWT authentication, sliding-window rate limiting, and real-time DNS MX email domain verification.
+
+> 📖 For complete subsystem topology diagrams, sequence flows, database schema constraints, and contributor extension guidelines, see the full [Architecture Documentation](./Architecture.md).
 
 ---
 

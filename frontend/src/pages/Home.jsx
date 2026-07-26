@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMenuItems } from '../api/menuApi';
-import { getReviews } from '../api/reviewApi';
+import { getReviews, createReview } from '../api/reviewApi';
 import MenuCard from '../components/MenuCard';
 import { useAuth } from '../context/AuthContext';
 import Tooltip from '../components/Tooltip';
@@ -19,6 +19,44 @@ const Home = () => {
   const [featured, setFeatured] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loadingMenu, setLoadingMenu] = useState(true);
+  const [newRating, setNewRating] = useState(0);
+  const [newComment, setNewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState(false);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (newRating === 0) {
+      setFormError('Please select a rating.');
+      return;
+    }
+    if (newComment.trim().length < 5) {
+      setFormError('Please enter a comment (at least 5 characters).');
+      return;
+    }
+    setSubmittingReview(true);
+    setFormError('');
+    setFormSuccess(false);
+
+    try {
+      const { data } = await createReview({ rating: newRating, comment: newComment });
+      setFormSuccess(true);
+      setNewRating(0);
+      setNewComment('');
+      // Prepend new review to the list
+      const freshReview = {
+        ...data.data,
+        user: { name: user.name }
+      };
+      setReviews((prev) => [freshReview, ...prev].slice(0, 3));
+      setTimeout(() => setFormSuccess(false), 5000);
+    } catch (err) {
+      setFormError(err.response?.data?.error || 'Failed to submit review. Please try again.');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   useEffect(() => {
     getMenuItems({ tag: 'chef-special' })
@@ -178,6 +216,72 @@ const Home = () => {
         </section>
       )}
 
+      {/* Leave a Review Section */}
+      <section className="section review-form-section" style={{ borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-elevated)' }}>
+        <div className="container" style={{ maxWidth: '600px' }}>
+          <div className="section-header">
+            <span className="section-label">Your Feedback</span>
+            <h2 className="section-title">Leave a Review</h2>
+            <div className="divider">
+              <div className="divider-line" /><div className="divider-diamond" /><div className="divider-line right" />
+            </div>
+          </div>
+
+          {user ? (
+            <form onSubmit={handleReviewSubmit} className="review-submit-form glass" style={{ marginTop: 'var(--space-md)' }}>
+              {formError && <p className="form-error-msg">⚠️ {formError}</p>}
+              {formSuccess && <p className="form-success-msg">✨ Review submitted successfully!</p>}
+              
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Rating</label>
+                <div className="star-rating-input">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className={`star-input-btn ${star <= newRating ? 'filled' : 'empty'}`}
+                      onClick={() => setNewRating(star)}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginTop: 'var(--space-md)' }}>
+                <label htmlFor="review-comment" className="form-label" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Review Comment</label>
+                <textarea
+                  id="review-comment"
+                  className="form-input"
+                  rows="4"
+                  placeholder="Share your dining experience..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  style={{ width: '100%' }}
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary btn-full"
+                disabled={submittingReview}
+                style={{ marginTop: 'var(--space-lg)', width: '100%' }}
+              >
+                {submittingReview ? 'Submitting...' : 'Submit Review'}
+              </button>
+            </form>
+          ) : (
+            <div className="review-login-prompt glass" style={{ padding: 'var(--space-xl)', textAlign: 'center', borderRadius: 'var(--radius-lg)', marginTop: 'var(--space-md)' }}>
+              <p style={{ color: 'var(--color-text-muted)', marginBottom: 'var(--space-md)' }}>
+                Only registered guests can leave reviews.
+              </p>
+              <Link to="/auth" className="btn btn-outline">Sign In / Register</Link>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="section cta-section">
         <div className="container cta-inner">
@@ -230,6 +334,53 @@ const Home = () => {
 
         .cta-section { text-align: center; background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-elevated) 100%); }
         .cta-inner { display: flex; flex-direction: column; align-items: center; }
+
+        .review-submit-form {
+          padding: var(--space-xl);
+          border-radius: var(--radius-lg);
+          display: flex;
+          flex-direction: column;
+        }
+        .star-rating-input {
+          display: flex;
+          gap: 8px;
+        }
+        .star-input-btn {
+          background: none;
+          border: none;
+          font-size: 2.2rem;
+          cursor: pointer;
+          padding: 0;
+          transition: transform 0.2s ease, color 0.2s ease;
+          color: var(--color-border);
+        }
+        .star-input-btn:hover {
+          transform: scale(1.15);
+        }
+        .star-input-btn.filled {
+          color: var(--color-primary);
+        }
+        .star-input-btn.empty {
+          color: var(--color-border);
+        }
+        .form-error-msg {
+          color: var(--color-error);
+          background: rgba(224, 92, 92, 0.08);
+          border: 1px solid rgba(224, 92, 92, 0.2);
+          padding: 0.75rem;
+          border-radius: var(--radius-md);
+          font-size: 0.88rem;
+          margin-bottom: var(--space-md);
+        }
+        .form-success-msg {
+          color: var(--color-success);
+          background: rgba(76, 175, 125, 0.08);
+          border: 1px solid rgba(76, 175, 125, 0.2);
+          padding: 0.75rem;
+          border-radius: var(--radius-md);
+          font-size: 0.88rem;
+          margin-bottom: var(--space-md);
+        }
 
         @media (max-width: 768px) {
           .problem-cards { grid-template-columns: 1fr; }

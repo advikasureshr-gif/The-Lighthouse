@@ -4423,3 +4423,138 @@ body.light-theme .newsletter-form input {
   font-size: 0.95rem;
   line-height: 1.6;
 }
+
+/* ── Reservation Modal Overlay ── */
+.reservation-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3500;
+  background-color: rgba(16, 13, 11, 0.85);
+  backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.reservation-modal.active {
+  display: flex;
+}
+
+.reservation-modal-content {
+  background-color: var(--color-bg-card, #2a2725);
+  border: 1px solid var(--color-border, #3d3835);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 580px;
+  padding: 32px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  animation: modalReveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.reservation-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: var(--color-text-muted, #a0958d);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.reservation-modal-close:hover {
+  color: var(--color-primary, #d4af37);
+  transform: scale(1.1);
+}
+
+.reservation-modal-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.reservation-modal-header .modal-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--color-text, #f5f0eb);
+  margin: 6px 0;
+}
+
+.reservation-modal-header .modal-subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #a0958d);
+}
+
+.reservation-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reservation-modal-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.reservation-modal-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reservation-modal-form label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text, #f5f0eb);
+  letter-spacing: 0.5px;
+}
+
+.reservation-modal-form input,
+.reservation-modal-form select,
+.reservation-modal-form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: var(--color-bg, #1a1816);
+  border: 1px solid var(--color-border, #3d3835);
+  border-radius: 8px;
+  color: var(--color-text, #f5f0eb);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reservation-modal-form input:focus,
+.reservation-modal-form select:focus,
+.reservation-modal-form textarea:focus {
+  outline: none;
+  border-color: var(--color-primary, #d4af37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.reservation-modal-form .modal-form-actions {
+  margin-top: 8px;
+}
+
+.reservation-modal-form .w-full {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .reservation-modal-form .form-row {
+    grid-template-columns: 1fr;
+  }
+  .reservation-modal-content {
+    padding: 24px 18px;
+  }
+}
+

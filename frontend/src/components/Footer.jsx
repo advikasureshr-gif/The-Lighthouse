@@ -9,6 +9,32 @@ const Footer = () => (
           <span className="footer__logo">🌊 The Lighthouse</span>
         </Tooltip>
         <p className="footer__tagline">Fine Dining. Reimagined.</p>
+        
+        <div className="footer__socials">
+          <Tooltip content="Follow us on Instagram" position="top">
+            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="footer__social-link" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+          </Tooltip>
+          <Tooltip content="Follow us on Facebook" position="top">
+            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="footer__social-link" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 0-1-1h3z" />
+              </svg>
+            </a>
+          </Tooltip>
+          <Tooltip content="Follow us on X (formerly Twitter)" position="top">
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="footer__social-link" aria-label="X">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4l16 16M20 4L4 20" />
+              </svg>
+            </a>
+          </Tooltip>
+        </div>
       </div>
 
       <div className="footer__links">
@@ -63,6 +89,32 @@ const Footer = () => (
         color: var(--color-text-faint);
         margin-top: 0.25rem;
         letter-spacing: 0.08em;
+      }
+      .footer__socials {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.2rem;
+      }
+      .footer__social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-muted);
+        transition: all var(--transition);
+      }
+      .footer__social-link:hover {
+        color: var(--color-primary);
+        border-color: var(--color-border-hover);
+        background: rgba(201, 169, 98, 0.08);
+        transform: translateY(-2px);
+      }
+      .footer__social-link svg {
+        width: 16px;
+        height: 16px;
       }
       .footer__links {
         display: flex;

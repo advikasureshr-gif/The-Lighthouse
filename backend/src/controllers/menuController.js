@@ -44,12 +44,45 @@ exports.getMenuItems = async (req, res) => {
       filter.isAvailable = true;
     }
 
-    const menuItems = await MenuItem.find(filter).sort({ category: 1, sortOrder: 1, name: 1 });
+    const menuItems = await MenuItem.aggregate([
+      { $match: filter },
+      { $sort: { category: 1, sortOrder: 1, name: 1 } },
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: '_id',
+          foreignField: 'menuItem',
+          as: 'reviews'
+        }
+      },
+      {
+        $addFields: {
+          reviewCount: { $size: '$reviews' },
+          averageRating: {
+            $cond: {
+              if: { $gt: [{ $size: '$reviews' }, 0] },
+              then: { $round: [{ $avg: '$reviews.rating' }, 1] },
+              else: 0
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          reviews: 0
+        }
+      }
+    ]);
+
+    const formattedMenuItems = menuItems.map((item) => ({
+      ...item,
+      id: item._id
+    }));
 
     res.status(200).json({
       success: true,
-      count: menuItems.length,
-      data: menuItems
+      count: formattedMenuItems.length,
+      data: formattedMenuItems
     });
   } catch (error) {
     console.error('Menu Operation Error [getMenuItems]:', error);
@@ -69,10 +102,41 @@ exports.getMenuItem = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid menu item ID format' });
     }
 
-    const item = await MenuItem.findById(req.params.id);
-    if (!item) {
+    const itemObjectId = new mongoose.Types.ObjectId(req.params.id);
+    const items = await MenuItem.aggregate([
+      { $match: { _id: itemObjectId } },
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: '_id',
+          foreignField: 'menuItem',
+          as: 'reviews'
+        }
+      },
+      {
+        $addFields: {
+          reviewCount: { $size: '$reviews' },
+          averageRating: {
+            $cond: {
+              if: { $gt: [{ $size: '$reviews' }, 0] },
+              then: { $round: [{ $avg: '$reviews.rating' }, 1] },
+              else: 0
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          reviews: 0
+        }
+      }
+    ]);
+
+    if (!items || items.length === 0) {
       return res.status(404).json({ success: false, error: 'Menu item not found' });
     }
+
+    const item = { ...items[0], id: items[0]._id };
     res.status(200).json({ success: true, data: item });
   } catch (error) {
     console.error('Menu Operation Error [getMenuItem]:', error);
