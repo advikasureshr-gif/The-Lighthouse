@@ -1,7 +1,34 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Tooltip from './Tooltip';
 
-const Footer = () => (
+const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+  const handleNewsletterSubmit = (event) => {
+    event.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!email.trim()) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    setSuccess('Thanks for subscribing!');
+    setEmail('');
+  };
+
+  return (
   <footer className="footer">
     <div className="container footer__inner">
       <div className="footer__brand">
@@ -59,6 +86,28 @@ const Footer = () => (
         <Tooltip content="Open 7 days a week, 7 AM to 11 PM" position="top">
           <p>⏰ Mon–Sun · 7 AM – 11 PM</p>
         </Tooltip>
+
+        <form className="footer__newsletter" onSubmit={handleNewsletterSubmit} noValidate>
+          <label htmlFor="newsletter-email" className="footer__newsletter-label">Join our newsletter</label>
+          <div className="footer__newsletter-row">
+            <input
+              id="newsletter-email"
+              type="email"
+              required
+              className="footer__newsletter-input"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                if (error) setError('');
+                if (success) setSuccess('');
+              }}
+            />
+            <button type="submit" className="footer__newsletter-button">Subscribe</button>
+          </div>
+          {error && <p className="footer__newsletter-error">{error}</p>}
+          {success && <p className="footer__newsletter-success">{success}</p>}
+        </form>
       </div>
     </div>
 
@@ -133,6 +182,49 @@ const Footer = () => (
         color: var(--color-text-muted);
         margin-bottom: 0.4rem;
       }
+      .footer__newsletter {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .footer__newsletter-label {
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .footer__newsletter-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .footer__newsletter-input {
+        flex: 1 1 180px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        background: var(--color-bg);
+        color: var(--color-text);
+        padding: 0.7rem 0.8rem;
+        font-size: 0.9rem;
+      }
+      .footer__newsletter-button {
+        border: none;
+        border-radius: var(--radius-sm);
+        background: var(--color-primary);
+        color: var(--color-bg);
+        padding: 0.7rem 0.95rem;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .footer__newsletter-error {
+        font-size: 0.8rem;
+        color: #f87171;
+      }
+      .footer__newsletter-success {
+        font-size: 0.8rem;
+        color: #4ade80;
+      }
       .footer__bottom {
         border-top: 1px solid var(--color-border);
         padding: var(--space-md) 0;
@@ -148,6 +240,7 @@ const Footer = () => (
       }
     `}</style>
   </footer>
-);
+  );
+};
 
 export default Footer;
