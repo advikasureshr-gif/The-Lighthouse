@@ -677,6 +677,14 @@ body.light-theme .btn-outline:hover {
   gap: 20px;
   align-items: center;
 }
+.search-result-count {
+  text-align: center;
+  margin: 12px 0 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color 0.3s ease;
+}
 
 .menu-search {
   width: 100%;

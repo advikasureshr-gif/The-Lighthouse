@@ -4,6 +4,7 @@
 const nav = document.getElementById("nav");
 const cuisineDropdown = document.getElementById("cuisine-filter");
 const menuSearch = document.getElementById("menu-search");
+const searchResultCount = document.getElementById("search-result-count");
 const navToggle = document.getElementById("navToggle");
 const navMenu = document.getElementById("navMenu");
 const navLinks = document.querySelectorAll(".nav-link");
@@ -198,6 +199,17 @@ function filterMenuItems(timeFilter, cuisineFilter, searchText) {
 
   // Handle "No Results" display
   let noResults = document.querySelector(".no-results");
+  if (searchResultCount) {
+  if (visibleCount === menuItems.length) {
+    searchResultCount.textContent = "Showing all dishes";
+  } else if (visibleCount === 0) {
+    searchResultCount.textContent = "No matching dishes found";
+  } else if (visibleCount === 1) {
+    searchResultCount.textContent = "Showing 1 matching dish";
+  } else {
+    searchResultCount.textContent = `Showing ${visibleCount} matching dishes`;
+  }
+}
   if (visibleCount === 0) {
     if (!noResults) {
       noResults = document.createElement('p');
