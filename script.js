@@ -13,6 +13,7 @@ const reservationForm = document.getElementById("reservationForm");
 const dateInput = document.getElementById("reservation-date");
 const timeSelect = document.getElementById("time");
 const themeToggle = document.getElementById("themeToggle");
+const reviewCount = document.getElementById("review-count");
 
 // FIX #4 — Declare filterBtns, menuTabs, menuPanels (were used but never declared)
 const filterBtns = document.querySelectorAll(".filter-btn");
@@ -448,7 +449,16 @@ function getReviews() {
 function saveReviews(reviews) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
 }
+function updateReviewCount() {
+  if (!reviewCount) return;
 
+  const totalReviews = getReviews().length + 1; // +1 for pinned review
+
+  reviewCount.textContent =
+    totalReviews === 1
+      ? "1 Customer Review"
+      : `${totalReviews} Customer Reviews`;
+}
 function renderReviews() {
   const grid = document.getElementById('reviews-grid');
   if (!grid) return;
@@ -472,6 +482,7 @@ function renderReviews() {
       </div>`
     )
     .join('');
+    updateReviewCount();
 }
 
 // Star rating widget

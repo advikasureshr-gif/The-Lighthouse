@@ -1186,7 +1186,13 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   gap: 28px;
   margin-bottom: 72px;
 }
-
+.review-count {
+  text-align: center;
+  margin: 12px 0 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
 .reviews-empty {
   grid-column: 1 / -1;
   text-align: center;
