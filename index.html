@@ -141,7 +141,23 @@
         <!-- Menu Search + Filters -->
         <div class="menu-controls">
           <label for="menu-search" class="sr-only">Search Menu</label>
-          <input type="text" id="menu-search" placeholder="Search dishes..." class="menu-search" />
+         <div class="menu-search-wrapper">
+  <input
+    type="text"
+    id="menu-search"
+    class="menu-search"
+    placeholder="Search menu..."
+  />
+
+  <button
+    type="button"
+    id="clear-search"
+    class="clear-search-btn"
+    aria-label="Clear search"
+  >
+    &times;
+  </button>
+</div>
           <div class="menu-filters">
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="breakfast">Breakfast</button>

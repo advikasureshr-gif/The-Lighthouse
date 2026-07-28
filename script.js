@@ -4,6 +4,7 @@
 const nav = document.getElementById("nav");
 const cuisineDropdown = document.getElementById("cuisine-filter");
 const menuSearch = document.getElementById("menu-search");
+const clearSearchBtn = document.getElementById("clear-search");
 const navToggle = document.getElementById("navToggle");
 const navMenu = document.getElementById("navMenu");
 const navLinks = document.querySelectorAll(".nav-link");
@@ -224,9 +225,25 @@ if (cuisineDropdown) {
 }
 
 if (menuSearch) {
-  menuSearch.addEventListener("input", triggerFilter);
-}
+  menuSearch.addEventListener("input", () => {
+    triggerFilter();
 
+    if (clearSearchBtn) {
+      clearSearchBtn.classList.toggle(
+        "visible",
+        menuSearch.value.trim() !== ""
+      );
+    }
+  });
+}
+if (clearSearchBtn) {
+  clearSearchBtn.addEventListener("click", () => {
+    menuSearch.value = "";
+    clearSearchBtn.classList.remove("visible");
+    triggerFilter();
+    menuSearch.focus();
+  });
+}
 // Filter buttons
 filterBtns.forEach((btn) => {
   btn.addEventListener("click", () => {

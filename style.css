@@ -677,18 +677,42 @@ body.light-theme .btn-outline:hover {
   gap: 20px;
   align-items: center;
 }
-
+.menu-search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+}
 .menu-search {
   width: 100%;
   max-width: 500px;
-  padding: 14px 18px;
+padding: 14px 48px 14px 18px;
   border: 1px solid var(--color-border);
   background-color: var(--color-bg-card);
   color: var(--color-text);
   border-radius: 4px;
   font-size: 1rem;
 }
+.clear-search-btn {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: none;
+  transition: color 0.2s ease;
+}
 
+.clear-search-btn:hover {
+  color: var(--color-primary);
+}
+
+.clear-search-btn.visible {
+  display: block;
+}
 .menu-search:focus {
   outline: none;
   border-color: var(--color-primary);
@@ -1296,7 +1320,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   color: var(--color-primary);
   transform: scale(1.1);
 }
-}
+
 @media (max-width: 1024px) {
   .reviews-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1458,7 +1482,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .newsletter-form input {
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--color-border);
-  padding: 14px 18px;
+  padding: 14px 48px 14px 18px;
   color: var(--color-text);
   border-radius: 40px;
   outline: none;
