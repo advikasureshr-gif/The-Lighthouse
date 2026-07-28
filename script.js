@@ -487,10 +487,18 @@ starBtns.forEach((btn) => {
     starBtns.forEach((s) => s.classList.toggle('active', +s.dataset.value <= selectedRating));
   });
   btn.addEventListener('click', () => {
-    selectedRating = +btn.dataset.value;
-    document.getElementById('review-rating').value = selectedRating;
-    starBtns.forEach((s) => s.classList.toggle('active', +s.dataset.value <= selectedRating));
-  });
+  selectedRating = +btn.dataset.value;
+  document.getElementById('review-rating').value = selectedRating;
+
+  starBtns.forEach((s) =>
+    s.classList.toggle('active', +s.dataset.value <= selectedRating)
+  );
+
+  if (selectedRatingText) {
+    selectedRatingText.textContent =
+      `You selected: ${selectedRating} ${selectedRating === 1 ? 'Star' : 'Stars'}`;
+  }
+});
 });
 
 // Review validation helpers
@@ -506,7 +514,7 @@ function isValidName(name) {
 }
 
 const reviewForm = document.getElementById('review-form');
-const reviewMsg = document.getElementById('review-msg');
+const selectedRatingText = document.getElementById('selected-rating-text');
 
 if (reviewForm) {
   reviewForm.addEventListener('submit', function (e) {
@@ -560,6 +568,10 @@ if (reviewForm) {
     selectedRating = 0;
     document.getElementById('review-rating').value = 0;
     starBtns.forEach((s) => s.classList.remove('active'));
+    if (selectedRatingText) {
+  selectedRatingText.textContent =
+    "You haven't selected a rating yet.";
+}
 
     reviewMsg.textContent = 'Review submitted successfully!';
     reviewMsg.style.color = '#4a9c6a';

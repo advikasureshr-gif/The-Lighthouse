@@ -1277,7 +1277,13 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   gap: 4px;
   padding: 6px 0;
 }
-
+.selected-rating-text {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
 .star-btn {
   background: none;
   border: none;
