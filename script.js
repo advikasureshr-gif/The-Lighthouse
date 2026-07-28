@@ -448,6 +448,38 @@ function getReviews() {
 function saveReviews(reviews) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
 }
+// Reservation Summary
+function updateReservationSummary() {
+  const name = document.getElementById("name");
+  const date = document.getElementById("reservation-date");
+  const time = document.getElementById("time");
+  const guests = document.getElementById("guests");
+
+  const summaryName = document.getElementById("summary-name");
+  const summaryDate = document.getElementById("summary-date");
+  const summaryTime = document.getElementById("summary-time");
+  const summaryGuests = document.getElementById("summary-guests");
+
+  if (
+    !name ||
+    !date ||
+    !time ||
+    !guests ||
+    !summaryName ||
+    !summaryDate ||
+    !summaryTime ||
+    !summaryGuests
+  ) {
+    return;
+  }
+
+  summaryName.textContent = name.value || "-";
+  summaryDate.textContent = date.value || "-";
+  summaryTime.textContent =
+    time.options[time.selectedIndex]?.text || "-";
+  summaryGuests.textContent =
+    guests.options[guests.selectedIndex]?.text || "-";
+}
 
 function renderReviews() {
   const grid = document.getElementById('reviews-grid');
@@ -653,6 +685,22 @@ document.addEventListener('DOMContentLoaded', function () {
   updateAvailableTimes();
   renderReviews();
   handleCardFlip();
+
+  updateReservationSummary();
+
+  [
+    "name",
+    "reservation-date",
+    "time",
+    "guests"
+  ].forEach((id) => {
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.addEventListener("input", updateReservationSummary);
+      element.addEventListener("change", updateReservationSummary);
+    }
+  });
 });
 
 // Mobile flip style
