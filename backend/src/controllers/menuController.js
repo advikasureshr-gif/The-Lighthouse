@@ -22,6 +22,20 @@ exports.getMenuItems = async (req, res) => {
     if (req.query.tag) {
       filter.tags = req.query.tag;
     }
+    // Filter by workout fit (e.g. ?workout=Post-Workout Fuel)
+    if (req.query.workout) {
+      filter.workoutTags = req.query.workout;
+    }
+    // Filter by energy band (e.g. ?energy=light|moderate|heavy)
+    if (req.query.energy) {
+      if (req.query.energy === 'light') {
+        filter.calories = { $lt: 250 };
+      } else if (req.query.energy === 'moderate') {
+        filter.calories = { $gte: 250, $lte: 450 };
+      } else if (req.query.energy === 'heavy') {
+        filter.calories = { $gt: 450 };
+      }
+    }
 
     // By default, public users only see available items
     // Admin can pass ?showAll=true to see unavailable items too

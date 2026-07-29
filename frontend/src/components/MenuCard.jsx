@@ -13,6 +13,17 @@ const TAG_LABELS = {
   'new':          { label: 'New', icon: '✨' },
   'spicy':        { label: 'Spicy', icon: '🌶️' }
 };
+const renderStars = (rating = 0) => {
+  const full = Math.round(rating);
+  return '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
+};
+
+const energyBand = (calories) => {
+  if (calories == null) return null;
+  if (calories < 250) return 'Light';
+  if (calories <= 450) return 'Moderate';
+  return 'Heavy';
+};
 
 const Stars = ({ rating }) => (
   <div className="stars-inline">
@@ -180,6 +191,9 @@ const MenuCard = ({ item }) => {
         tabIndex={0}
       >
         <div className="menu-card__image-wrap">
+          {item.badge && (
+            <span className="menu-card__ribbon">{item.badge}</span>
+          )}
           <img
             src={item.image || '/images/dinner.jpg'}
             alt={item.name}
@@ -209,7 +223,6 @@ const MenuCard = ({ item }) => {
               </Tooltip>
             ))}
           </div>
-
           <div className="menu-card__header-row">
             <h3 className="menu-card__name">{item.name}</h3>
           </div>
@@ -232,9 +245,12 @@ const MenuCard = ({ item }) => {
                 </div>
               </Tooltip>
             )}
+            {item.orderCount > 0 && (
+              <span className="menu-card__orders">· {item.orderCount} orders</span>
+            )}
           </div>
 
-          <p className="menu-card__desc">{item.description}</p>
+          <p className="menu-card__desc">{item.description}</p> 
 
           <div className="menu-card__footer">
             <span className="menu-card__price">₹{item.price}</span>
@@ -314,6 +330,32 @@ const MenuCard = ({ item }) => {
           .menu-card__diet-dot.veg::after { background: var(--color-success); }
           .menu-card__diet-dot.nonveg { border-color: var(--color-error); }
           .menu-card__diet-dot.nonveg::after { background: var(--color-error); }
+          .menu-card__ribbon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.55);
+            color: var(--color-primary);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            backdrop-filter: blur(8px);
+            z-index: 1;
+          }
+
+          .menu-card__rating {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.78rem;
+            color: var(--color-text-faint);
+          }
+          .menu-card__stars { color: var(--color-primary); letter-spacing: 1px; }
+          .menu-card__rating-text { color: var(--color-text-muted); }
+          .menu-card__orders { color: var(--color-text-faint); }
 
           .menu-card__body { padding: var(--space-lg); flex: 1; display: flex; flex-direction: column; gap: var(--space-xs); }
           .menu-card__tags { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-bottom: 2px; }
@@ -545,6 +587,12 @@ const MenuCard = ({ item }) => {
                   <span className="section-label">Dish Details & Reviews</span>
                   <h3 className="menu-card-detail__title">{item.name}</h3>
                   <p className="menu-card-detail__subtitle">{item.category} • {item.isVeg ? 'Vegetarian' : 'Non-Vegetarian'}</p>
+                  {item.reviewCount > 0 && (
+                    <p className="menu-card-detail__subtitle">
+                      {renderStars(item.rating)} {item.rating.toFixed(1)} · {item.reviewCount} reviews
+                      {item.orderCount > 0 && ` · ${item.orderCount} orders this month`}
+                    </p>
+                  )}
                 </div>
                 <div className="menu-card-detail__price-pill">₹{item.price}</div>
               </div>
@@ -557,6 +605,12 @@ const MenuCard = ({ item }) => {
                 </span>
                 <span className="menu-card-detail__tag">⏱ {item.preparationTime} min</span>
                 <span className="menu-card-detail__tag">{item.category}</span>
+                {item.calories != null && (
+                  <span className="menu-card-detail__tag">🔥 {item.calories} kcal · {energyBand(item.calories)}</span>
+                )}
+                {(item.workoutTags || []).map((tag) => (
+                  <span key={tag} className="menu-card-detail__tag">{tag}</span>
+                ))}
               </div>
 
               {/* Rating Overview Box */}

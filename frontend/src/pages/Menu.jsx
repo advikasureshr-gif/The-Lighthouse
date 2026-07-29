@@ -9,6 +9,13 @@ const CATEGORY_ICONS = {
   all: '🍽️', breakfast: '🍳', lunch: '🥗',
   dinner: '🌙', desserts: '🍰', drinks: '🍸'
 };
+const energyBand = (calories) => {
+  if (calories < 250) return 'light';
+  if (calories <= 450) return 'moderate';
+  return 'heavy';
+};
+
+const WORKOUT_TAGS = ['all', 'Post-Workout Fuel', 'Pre-Workout Energy', 'Light & Fresh', 'Indulgent'];
 
 const Menu = () => {
   const { user } = useAuth();
@@ -16,12 +23,17 @@ const Menu = () => {
 
   const [category, setCategory] = useState('all');
   const [dietFilter, setDietFilter] = useState('all');
+  const [energyFilter, setEnergyFilter] = useState('all');
+  const [workoutFilter, setWorkoutFilter] = useState('all');
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    if (user?.dietaryPreference && user.dietaryPreference !== 'all') {
-      setDietFilter(user.dietaryPreference);
-    }
+    // if (user?.dietaryPreference && user.dietaryPreference !== 'all') {
+    //   setDietFilter(user.dietaryPreference);
+    // }
+    {user?.dietaryPreference && user.dietaryPreference !== 'all' && (
+      <span className="menu-count__pref"> · Filtered by your profile: <strong className="gold">{user.dietaryPreference}</strong></span>
+    )}
   }, [user]);
 
   useEffect(() => {
@@ -36,12 +48,14 @@ const Menu = () => {
       const matchDiet = dietFilter === 'all'
         || (dietFilter === 'veg' && item.isVeg)
         || (dietFilter === 'non-veg' && !item.isVeg);
+      const matchEnergy = energyFilter === 'all' || energyBand(item.calories) === energyFilter;
+      const matchWorkout = workoutFilter === 'all' || (item.workoutTags || []).includes(workoutFilter);
       const matchSearch = search === ''
         || item.name.toLowerCase().includes(search.toLowerCase())
         || item.description.toLowerCase().includes(search.toLowerCase());
-      return matchCat && matchDiet && matchSearch;
+      return matchCat && matchDiet && matchEnergy && matchWorkout && matchSearch;
     });
-  }, [items, category, dietFilter, search]);
+  }, [items, category, dietFilter, energyFilter, workoutFilter, search]);
 
   return (
     <main className="page-enter menu-page">
@@ -100,6 +114,55 @@ const Menu = () => {
                 </button>
               </Tooltip>
             </div>
+            
+
+            <div className="diet-toggle">
+              <Tooltip content="Show dishes of any calorie level" position="bottom">
+                <button
+                  className={`diet-btn ${energyFilter === 'all' ? 'diet-btn--active' : ''}`}
+                  onClick={() => setEnergyFilter('all')}
+                >
+                  Any Energy
+                </button>
+              </Tooltip>
+              <Tooltip content="Under 250 kcal" position="bottom">
+                <button
+                  className={`diet-btn ${energyFilter === 'light' ? 'diet-btn--active' : ''}`}
+                  onClick={() => setEnergyFilter('light')}
+                >
+                  Light
+                </button>
+              </Tooltip>
+              <Tooltip content="250–450 kcal" position="bottom">
+                <button
+                  className={`diet-btn ${energyFilter === 'moderate' ? 'diet-btn--active' : ''}`}
+                  onClick={() => setEnergyFilter('moderate')}
+                >
+                  Moderate
+                </button>
+              </Tooltip>
+              <Tooltip content="450+ kcal" position="bottom">
+                <button
+                  className={`diet-btn ${energyFilter === 'heavy' ? 'diet-btn--active' : ''}`}
+                  onClick={() => setEnergyFilter('heavy')}
+                >
+                  Heavy
+                </button>
+              </Tooltip>
+            </div>
+
+          <div className="diet-toggle">
+            {WORKOUT_TAGS.map((tag) => (
+              <Tooltip key={tag} content={tag === 'all' ? 'Show all dishes' : `Filter by ${tag}`} position="bottom">
+                <button
+                  className={`diet-btn ${workoutFilter === tag ? 'diet-btn--active' : ''}`}
+                  onClick={() => setWorkoutFilter(tag)}
+                >
+                  {tag === 'all' ? 'All' : tag}
+                </button>
+              </Tooltip>
+            ))}
+          </div>
             <Tooltip content="Search for dishes by name or description" position="bottom">
               <input
                 type="text"
@@ -116,7 +179,7 @@ const Menu = () => {
         {!loading && (
           <p className="menu-count">
             {filtered.length} {filtered.length === 1 ? 'dish' : 'dishes'} found
-            {user && user.dietaryPreference !== 'all' && (
+              {user && user.dietaryPreference !== 'all' && (
               <span className="menu-count__pref"> · Filtered by your profile: <strong className="gold">{user.dietaryPreference}</strong></span>
             )}
           </p>
@@ -137,7 +200,7 @@ const Menu = () => {
           <div className="menu-empty">
             <p>🍽️ No dishes match your filters.</p>
             <Tooltip content="Reset all filters to see full menu" position="top">
-              <button className="btn btn-ghost" onClick={() => { setCategory('all'); setDietFilter('all'); setSearch(''); }}>
+              <button className="btn btn-ghost" onClick={() => { setCategory('all'); setDietFilter('all'); setEnergyFilter('all'); setWorkoutFilter('all'); setSearch(''); }}>
                 Clear filters
               </button>
             </Tooltip>
@@ -186,7 +249,8 @@ const Menu = () => {
           background: rgba(201,169,98,0.08);
           border-color: var(--color-border-hover);
         }
-        .menu-filters { display: flex; align-items: center; gap: var(--space-lg); flex-wrap: wrap; }
+        // .menu-filters { display: flex; align-items: center; gap: var(--space-lg); flex-wrap: wrap; }
+        .menu-filters { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-md); }
         .diet-toggle { display: flex; gap: var(--space-xs); background: var(--color-surface); border-radius: var(--radius-full); padding: 3px; }
         .diet-btn { padding: 0.4rem 1rem; font-size: 0.75rem; font-weight: 500; border-radius: var(--radius-full); color: var(--color-text-muted); transition: all var(--transition); }
         .diet-btn--active { background: var(--color-bg-card); color: var(--color-text); }
