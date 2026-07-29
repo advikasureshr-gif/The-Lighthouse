@@ -41,8 +41,8 @@ const Footer = () => (
         <Tooltip content="View our full menu" position="top">
           <Link to="/menu">Menu</Link>
         </Tooltip>
-        <Tooltip content="Book a table" position="top">
-          <Link to="/reserve">Reservations</Link>
+        <Tooltip content="Reserve your table" position="top">
+          <Link to="/reserve">Reserve Table</Link>
         </Tooltip>
         <Tooltip content="Sign in to your account" position="top">
           <Link to="/auth">Sign In</Link>

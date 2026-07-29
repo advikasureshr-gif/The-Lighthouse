@@ -86,8 +86,8 @@ const Home = () => {
             Fine dining with live menu availability — no surprises, only excellence.
           </p>
           <div className="hero__cta">
-            <Tooltip content="Book a table for your dining experience" position="top">
-              <Link to="/reserve" className="btn btn-primary">Reserve a Table</Link>
+            <Tooltip content="Start your reservation for tonight" position="top">
+              <Link to="/reserve#reservation-form" className="btn btn-primary">Reserve Table</Link>
             </Tooltip>
             <Tooltip content="Explore our live menu with real-time availability" position="top">
               <Link to="/menu" className="btn btn-outline">Explore Menu</Link>
@@ -153,9 +153,9 @@ const Home = () => {
               With over two decades of culinary artistry, our executive chef crafts every dish from locally sourced, seasonal ingredients.
               The live menu reflects what's freshest today — not yesterday's printed card.
             </p>
-            <Tooltip content="Book your dining experience with us" position="top">
-              <Link to="/reserve" className="btn btn-primary" style={{ marginTop: 'var(--space-lg)' }}>
-                Book Your Experience
+            <Tooltip content="Explore our menu before you dine with us" position="top">
+              <Link to="/menu" className="btn btn-primary" style={{ marginTop: 'var(--space-lg)' }}>
+                Explore the Menu
               </Link>
             </Tooltip>
           </div>
@@ -260,14 +260,14 @@ const Home = () => {
       {/* CTA Section */}
       <section className="section cta-section">
         <div className="container cta-inner">
-          <span className="section-label">Reserve Your Evening</span>
+          <span className="section-label">Tonight at The Lighthouse</span>
           <h2 className="section-title">Ready for an Unforgettable Meal?</h2>
           <p className="section-subtitle" style={{ margin: '1rem auto' }}>
-            Check tonight's live menu, pick your time slot, and walk in knowing exactly what to expect.
+            Explore tonight's live menu, then reserve your table for the perfect evening.
           </p>
-          <Tooltip content="Book your table for an unforgettable dining experience" position="top">
-            <Link to="/reserve" className="btn btn-primary" style={{ marginTop: 'var(--space-lg)' }}>
-              Make a Reservation
+          <Tooltip content="View the live menu before reserving your table" position="top">
+            <Link to="/menu" className="btn btn-primary" style={{ marginTop: 'var(--space-lg)' }}>
+              Explore the Menu
             </Link>
           </Tooltip>
         </div>

@@ -54,6 +54,17 @@ const Reserve = () => {
     }
   }, [step]);
 
+  useEffect(() => {
+    if (window.location.hash === '#reservation-form') {
+      requestAnimationFrame(() => {
+        const formSection = document.getElementById('reservation-form');
+        if (formSection) {
+          formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+  }, []);
+
   const handleConfirm = async () => {
     if (!user) { navigate('/auth'); return; }
     setLoading(true);
@@ -131,7 +142,7 @@ const Reserve = () => {
           ))}
         </div>
 
-        <div className="reserve-card glass">
+        <div className="reserve-card glass" id="reservation-form">
           {/* Step 0: Date & Guests */}
           {step === 0 && (
             <div className="reserve-step">
