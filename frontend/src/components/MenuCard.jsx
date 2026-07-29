@@ -2,8 +2,9 @@ import { toggleAvailability, getMenuItems } from '../api/menuApi';
 import { getReviews, createReview } from '../api/reviewApi';
 import { useMenu } from '../context/MenuContext';
 import { useAuth } from '../context/AuthContext';
+import { useReservation } from '../context/ReservationContext';
 import { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Tooltip from './Tooltip';
 
 const TAG_LABELS = {
@@ -25,6 +26,8 @@ const Stars = ({ rating }) => (
 const MenuCard = ({ item }) => {
   const { updateItem } = useMenu();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { reservationDetails, preOrder, addToPreOrder, updatePreOrderQuantity, hasActiveBookingDetails } = useReservation();
 
   const [toggling, setToggling] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +49,29 @@ const MenuCard = ({ item }) => {
 
   const isAdmin = user?.role === 'admin';
   const itemId = item._id || item.id;
+
+  const preOrderItem = preOrder.find(p => (p.menuItem._id || p.menuItem.id) === itemId);
+  const quantity = preOrderItem ? preOrderItem.quantity : 0;
+
+  const handlePreOrderAction = (event) => {
+    event.stopPropagation();
+    if (!hasActiveBookingDetails()) {
+      alert("Please select your reservation date and time first so we can check kitchen availability for that day!");
+      navigate('/reserve');
+      return;
+    }
+    addToPreOrder(item);
+  };
+
+  const handleIncrement = (event) => {
+    event.stopPropagation();
+    updatePreOrderQuantity(itemId, quantity + 1);
+  };
+
+  const handleDecrement = (event) => {
+    event.stopPropagation();
+    updatePreOrderQuantity(itemId, quantity - 1);
+  };
 
   // Sync state if prop changes
   useEffect(() => {
@@ -243,6 +269,24 @@ const MenuCard = ({ item }) => {
             </Tooltip>
           </div>
 
+          <div className="menu-card__preorder-row" onClick={(e) => e.stopPropagation()}>
+            {quantity > 0 ? (
+              <div className="preorder-controls">
+                <button className="preorder-btn preorder-btn--minus" onClick={handleDecrement}>−</button>
+                <span className="preorder-qty">{quantity} in Booking</span>
+                <button className="preorder-btn preorder-btn--plus" onClick={handleIncrement}>+</button>
+              </div>
+            ) : (
+              <button 
+                className={`btn btn-primary btn-sm btn-preorder ${!item.isAvailable ? 'btn-preorder--disabled' : ''}`}
+                onClick={handlePreOrderAction}
+                disabled={!item.isAvailable}
+              >
+                {hasActiveBookingDetails() ? 'Add to Booking' : 'Reserve & Pre-order'}
+              </button>
+            )}
+          </div>
+
           {isAdmin && (
             <div className="menu-card__admin" onClick={(event) => event.stopPropagation()}>
               <Tooltip content={item.isAvailable ? "Mark as sold out" : "Mark as available"} position="top">
@@ -266,6 +310,54 @@ const MenuCard = ({ item }) => {
         </div>
 
         <style>{`
+          .menu-card__preorder-row {
+            margin-top: var(--space-md);
+            border-top: 1px dashed var(--color-border);
+            padding-top: var(--space-md);
+            display: flex;
+            justify-content: stretch;
+            align-items: center;
+          }
+          .btn-preorder {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+          }
+          .preorder-controls {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            background: rgba(201, 169, 98, 0.04);
+            overflow: hidden;
+          }
+          .preorder-btn {
+            background: none;
+            border: none;
+            color: var(--color-primary);
+            font-size: 1.2rem;
+            width: 40px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background var(--transition);
+          }
+          .preorder-btn:hover {
+            background: rgba(201, 169, 98, 0.12);
+          }
+          .preorder-qty {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text);
+          }
+
           .menu-card { position: relative; display: flex; flex-direction: column; cursor: pointer; transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition); }
           .menu-card:hover { transform: translateY(-4px); border-color: var(--color-border-hover); box-shadow: 0 12px 30px rgba(0,0,0,0.18); }
           .menu-card--unavailable { opacity: 0.6; }

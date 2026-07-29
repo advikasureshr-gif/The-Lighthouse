@@ -49,7 +49,7 @@ const Navbar = () => {
             Menu
           </NavLink>
           <NavLink to="/reserve" onClick={() => setMenuOpen(false)} className={({ isActive }) => isActive ? 'nav-link nav-link--active' : 'nav-link'}>
-            Reserve
+            Reserve & Pre-order
           </NavLink>
 
           {user ? (
