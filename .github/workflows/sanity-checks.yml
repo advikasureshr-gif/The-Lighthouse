@@ -1,0 +1,110 @@
+name: Sanity Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  legacy-sanity:
+    name: Legacy Sanity Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify script.js syntax
+        run: node --check script.js
+
+      - name: Verify index.html integrity
+        run: |
+          for tag in "</body>" "</html>" 'src="script.js"'; do
+            grep -qF "$tag" index.html || { echo "index.html is missing: $tag"; exit 1; }
+          done
+
+      - name: Verify locale JSON syntax
+        run: |
+          for f in locales/*/translation.json; do
+            node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" "$f" \
+              || { echo "Invalid JSON: $f"; exit 1; }
+          done
+
+  frontend-ci:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run linter
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+  backend-ci:
+    name: Backend CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Verify JavaScript syntax
+        working-directory: backend
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          const { execFileSync } = require('child_process');
+
+          const ignoredDirs = new Set(['node_modules', 'dist', 'build', 'coverage', '.git']);
+
+          function getJsFiles(dir) {
+            let results = [];
+            const list = fs.readdirSync(dir, { withFileTypes: true });
+            for (const entry of list) {
+              const fullPath = path.join(dir, entry.name);
+              if (entry.isDirectory()) {
+                if (!ignoredDirs.has(entry.name)) {
+                  results = results.concat(getJsFiles(fullPath));
+                }
+              } else if (entry.isFile() && entry.name.endsWith('.js')) {
+                results.push(fullPath);
+              }
+            }
+            return results;
+          }
+
+          const files = getJsFiles('.');
+          console.log('Validating JS syntax for ' + files.length + ' files...');
+          for (const file of files) {
+            execFileSync(process.execPath, ['--check', file], { stdio: 'inherit' });
+          }
+          console.log('All JavaScript files passed syntax check.');
+          "
+
+
