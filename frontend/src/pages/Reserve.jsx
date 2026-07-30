@@ -43,16 +43,15 @@ const Reserve = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
-    if (step === 1) {
+    if (step === 2) {
       setLoadingMenu(true);
-      getTonightMenu()
+      getTonightMenu({ date, time: selectedSlot })
         .then(({ data }) => setTonightMenu(data.data))
         .catch(console.error)
         .finally(() => setLoadingMenu(false));
     }
-  }, [step]);
+  }, [step, date, selectedSlot]);
 
   useEffect(() => {
     if (window.location.hash === '#reservation-form') {

@@ -236,17 +236,45 @@ exports.deleteMenuItem = async (req, res) => {
 // @access  Public
 exports.getTonightMenu = async (req, res) => {
   try {
-    // 1. Resolve target timezone (client header, query parameter, or standard Asia/Kolkata)
-    const timezone = req.headers['x-timezone'] || req.query.timezone || 'Asia/Kolkata';
+    let hour;
 
-    // 2. Format the current time to the target timezone and safely parse the 24-hour value
-    const localHourString = new Intl.DateTimeFormat('en-US', {
-      timeZone: timezone,
-      hour: '2-digit',
-      hour12: false
-    }).format(new Date());
+    if (req.query.time && typeof req.query.time === 'string') {
+      const parts = req.query.time.split(':');
+      const parsedHour = parseInt(parts[0], 10);
+      if (!isNaN(parsedHour) && parsedHour >= 0 && parsedHour < 24) {
+        hour = parsedHour;
+      }
+    }
 
-    const hour = parseInt(localHourString, 10);
+    if (hour === undefined && req.query.date && typeof req.query.date === 'string') {
+      if (req.query.date.includes('T') || req.query.date.includes(':')) {
+        const parsedDate = new Date(req.query.date);
+        if (!isNaN(parsedDate.getTime())) {
+          const timezone = req.headers['x-timezone'] || req.query.timezone || 'Asia/Kolkata';
+          const localHourString = new Intl.DateTimeFormat('en-US', {
+            timeZone: timezone,
+            hour: '2-digit',
+            hour12: false
+          }).format(parsedDate);
+          hour = parseInt(localHourString, 10);
+        }
+      }
+    }
+
+    if (hour === undefined) {
+      // 1. Resolve target timezone (client header, query parameter, or standard Asia/Kolkata)
+      const timezone = req.headers['x-timezone'] || req.query.timezone || 'Asia/Kolkata';
+
+      // 2. Format the current time to the target timezone and safely parse the 24-hour value
+      const localHourString = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        hour: '2-digit',
+        hour12: false
+      }).format(new Date());
+
+      hour = parseInt(localHourString, 10);
+    }
+
     let categories;
 
     if (hour < 11) {
