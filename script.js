@@ -1100,8 +1100,38 @@ function updateCartQty(id, delta) {
   saveStoredList("lighthouse_cart", cart);
   renderOrderState();
 }
-function updateReviewCount() {
-  if (!reviewCount) return;
+// Reservation Summary
+function updateReservationSummary() {
+  const name = document.getElementById("name");
+  const date = document.getElementById("reservation-date");
+  const time = document.getElementById("time");
+  const guests = document.getElementById("guests");
+
+  const summaryName = document.getElementById("summary-name");
+  const summaryDate = document.getElementById("summary-date");
+  const summaryTime = document.getElementById("summary-time");
+  const summaryGuests = document.getElementById("summary-guests");
+
+  if (
+    !name ||
+    !date ||
+    !time ||
+    !guests ||
+    !summaryName ||
+    !summaryDate ||
+    !summaryTime ||
+    !summaryGuests
+  ) {
+    return;
+  }
+
+  summaryName.textContent = name.value || "-";
+  summaryDate.textContent = date.value || "-";
+  summaryTime.textContent =
+    time.options[time.selectedIndex]?.text || "-";
+  summaryGuests.textContent =
+    guests.options[guests.selectedIndex]?.text || "-";
+}
 
 function removeFavorite(id) {
   favorites = favorites.filter((favorite) => favorite.id !== id);
