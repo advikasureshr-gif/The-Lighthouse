@@ -1148,11 +1148,15 @@ body.light-theme .scroll-arrow {
   gap: 20px;
   align-items: center;
 }
-.menu-search-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
+.search-result-count {
+  text-align: center;
+  margin: 12px 0 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color 0.3s ease;
 }
+
 .menu-search {
   width: 100%;
   max-width: 500px;
@@ -2147,7 +2151,13 @@ legend{
   gap: 4px;
   padding: 6px 0;
 }
-
+.selected-rating-text {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
 .star-btn {
   background: none;
   border: none;
