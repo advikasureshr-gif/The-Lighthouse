@@ -155,6 +155,20 @@ function smoothScroll(e) {
   closeMobileMenu();
 }
 
+function scrollToSection(selector) {
+  const target = document.querySelector(selector);
+  if (!target) return;
+
+  const prefersReduced = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  window.scrollTo({
+    top: target.offsetTop - 80,
+    behavior: prefersReduced ? "auto" : "smooth",
+  });
+}
+
 function toggleMobileMenu() {
   if (!navToggle || !navMenu) return;
   navToggle.classList.toggle("active");
@@ -2457,6 +2471,14 @@ document.addEventListener('DOMContentLoaded', () => {
   navLinks.forEach((link) => link.addEventListener("click", smoothScroll));
   document.querySelectorAll(".nav-cta, .nav-cta-mobile, .hero-buttons a").forEach((link) => {
     link.addEventListener("click", smoothScroll);
+  });
+
+  document
+  .querySelectorAll(".clicktoscroll, .scroll-indicator, .scroll-arrow")
+  .forEach((element) => {
+    element.addEventListener("click", () => {
+      scrollToSection("#about");
+    });
   });
 
   filterBtns.forEach((btn) => {
