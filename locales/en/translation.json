@@ -200,6 +200,10 @@
     "saffron_rasmalai_desc": "Soft cottage cheese dumplings in saffron milk."
   },
   "reservation": {
+    "label": "Reservations",
+    "name": "Full Name",
+    "special_requests": "Special Requests",
+    "confirm": "Confirm Reservation",
     "join": "Join Us",
     "title": "Make a Reservation",
     "desc": "Reserve your table and experience an unforgettable evening of culinary excellence. For parties larger than 8, please call us directly.",
