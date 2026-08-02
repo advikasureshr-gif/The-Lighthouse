@@ -788,6 +788,13 @@ body.light-theme .clicktoscroll {
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55), 0 2px 16px rgba(0, 0, 0, 0.35);
 }
 
+/* Makes the scroll CTA elements appear interactive */
+.clicktoscroll,
+.scroll-indicator,
+.scroll-arrow {
+  cursor: pointer;
+}
+
 body.light-theme .scroll-indicator {
   background: linear-gradient(to bottom, #e5e2df, transparent);
 }
