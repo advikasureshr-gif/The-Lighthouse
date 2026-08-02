@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { MenuProvider } from './context/MenuContext';
+import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -16,6 +17,7 @@ const App = () => {
     <BrowserRouter>
       <AuthProvider>
         <MenuProvider>
+        <CartProvider>
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <CustomCursor />
             <Navbar />
@@ -42,6 +44,7 @@ const App = () => {
             </Routes>
             <Footer />
           </div>
+        </CartProvider>
         </MenuProvider>
       </AuthProvider>
     </BrowserRouter>
