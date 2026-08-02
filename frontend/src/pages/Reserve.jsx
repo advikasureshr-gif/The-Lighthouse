@@ -86,12 +86,22 @@ const Reserve = () => {
       setSlotsLoading(false);
     }
   };
-
   useEffect(() => {
     if (reservationDetails.date && reservationDetails.guests) {
       checkSlots();
     }
   }, [reservationDetails.date, reservationDetails.guests, reservationDetails.seatingPreference]);
+
+  useEffect(() => {
+    if (window.location.hash === '#reservation-form') {
+      requestAnimationFrame(() => {
+        const formSection = document.getElementById('reservation-form');
+        if (formSection) {
+          formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+  }, []);
 
   // Filtered menu list for pre-ordering step
   const filteredMenuItems = useMemo(() => {
@@ -246,7 +256,7 @@ const Reserve = () => {
         </div>
 
         {/* WIZARD CARD PANEL */}
-        <div className="reserve-card glass">
+        <div className="reserve-card glass" id="reservation-form">
           
           {/* STEP 0: RESERVE TABLE */}
           {step === 0 && (

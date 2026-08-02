@@ -54,6 +54,43 @@ const menuItemSchema = new mongoose.Schema(
     sortOrder: {
       type: Number,
       default: 0
+    },
+
+    // ---- NEW FIELDS: nutrition/energy (needed for Energy filter) ----
+    calories: {
+      type: Number,
+      min: [0, 'Calories cannot be negative'],
+      default: 0
+    },
+
+    // ---- NEW FIELDS: workout fit filter ----
+    workoutTags: {
+      type: [String],
+      enum: ['Post-Workout Fuel', 'Pre-Workout Energy', 'Light & Fresh', 'Indulgent'],
+      default: []
+    },
+
+    // ---- NEW FIELDS: reviews & popularity ----
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0
+    },
+    reviewCount: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    orderCount: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    badge: {
+      type: String,
+      enum: ['Bestseller', "Chef's Pick", null],
+      default: null
     }
   },
   {

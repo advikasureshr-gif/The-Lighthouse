@@ -1100,6 +1100,38 @@ function updateCartQty(id, delta) {
   saveStoredList("lighthouse_cart", cart);
   renderOrderState();
 }
+// Reservation Summary
+function updateReservationSummary() {
+  const name = document.getElementById("name");
+  const date = document.getElementById("reservation-date");
+  const time = document.getElementById("time");
+  const guests = document.getElementById("guests");
+
+  const summaryName = document.getElementById("summary-name");
+  const summaryDate = document.getElementById("summary-date");
+  const summaryTime = document.getElementById("summary-time");
+  const summaryGuests = document.getElementById("summary-guests");
+
+  if (
+    !name ||
+    !date ||
+    !time ||
+    !guests ||
+    !summaryName ||
+    !summaryDate ||
+    !summaryTime ||
+    !summaryGuests
+  ) {
+    return;
+  }
+
+  summaryName.textContent = name.value || "-";
+  summaryDate.textContent = date.value || "-";
+  summaryTime.textContent =
+    time.options[time.selectedIndex]?.text || "-";
+  summaryGuests.textContent =
+    guests.options[guests.selectedIndex]?.text || "-";
+}
 
 function removeFavorite(id) {
   favorites = favorites.filter((favorite) => favorite.id !== id);
@@ -2502,4 +2534,33 @@ document.addEventListener('DOMContentLoaded', () => {
       if (c) attachSkeletonToSimpleImage(c, 360);
     });
   }
+
+  const phoneInput = document.getElementById('modal-phone');
+const phoneError = document.getElementById('phone-error');
+
+phoneInput.addEventListener('input', () => {
+    // 1. Remove non-numeric characters without slicing at 10 digits
+    phoneInput.value = phoneInput.value.replace(/\D/g, '');
+
+    const val = phoneInput.value;
+
+    // 2. Show the error if the length exceeds 10 OR if it's incomplete on input
+    // If you only want the error to appear when they typed *more* than 10 digits while typing:
+    if (val.length > 10) {
+        phoneError.style.display = 'block';
+        phoneInput.style.borderColor = 'red';
+    } else {
+        phoneError.style.display = 'none';
+        phoneInput.style.borderColor = '';
+    }
+});
+
+// 3. Keep the blur listener to catch cases where they typed FEWER than 10 digits and left the field
+phoneInput.addEventListener('blur', () => {
+    const isValid = /^\d{10}$/.test(phoneInput.value);
+    if (!isValid && phoneInput.value.length > 0) {
+        phoneError.style.display = 'block';
+        phoneInput.style.borderColor = 'red';
+    }
+});
 });
